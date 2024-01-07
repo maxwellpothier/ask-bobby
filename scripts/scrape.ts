@@ -1,4 +1,4 @@
-import {Video} from "@/types";
+import {MyJson, Video} from "@/types";
 import {YoutubeTranscript} from "youtube-transcript";
 import {encode, decode} from "gpt-3-encoder";
 
@@ -55,8 +55,8 @@ const fetchTranscript = async (video: Video) => {
 (async () => {
 	await Promise.all(videos.map(video => fetchTranscript(video)));
 
-	// Log the chunks property for each video
-	videos.forEach(video => {
-		console.log(video);
-	});
+	const json: MyJson = {
+		tokens: videos.reduce((acc, video) => acc + video.tokens, 0),
+		videos,
+	};
 })();

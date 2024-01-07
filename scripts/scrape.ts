@@ -1,6 +1,6 @@
 import {Video} from "@/types";
 import {YoutubeTranscript} from "youtube-transcript";
-import {encode} from "gpt-3-encoder";
+import {encode, decode} from "gpt-3-encoder";
 
 const CHUNK_SIZE = 200;
 
@@ -25,10 +25,13 @@ const getChunks = (video: Video) => {
 	const {id, title, content} = video;
 
 	let videoTextChunks: string[] = [];
+	const tokens = encode(content);
 
-	// split the transcript into chunks
-	// we know the transcript is not going to fit in the max token limit (200)
-	// how do we sparate the transcript into chunks of 200 tokens?
+	for (let i = 0; i < tokens.length; i += CHUNK_SIZE) {
+		const chunkTokens = tokens.slice(i, i + CHUNK_SIZE);
+		const chunkText = decode(chunkTokens);
+		videoTextChunks.push(chunkText);
+	}
 
 	return videoTextChunks.map(chunk => ({
 		video_id: id,
@@ -52,6 +55,8 @@ const fetchTranscript = async (video: Video) => {
 (async () => {
 	await Promise.all(videos.map(video => fetchTranscript(video)));
 
-	// the content portion of videos is now populated
-	console.log(videos);
+	// Log the chunks property for each video
+	videos.forEach(video => {
+		console.log(video);
+	});
 })();

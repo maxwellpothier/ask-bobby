@@ -1,6 +1,7 @@
 import {MyJson, Video} from "@/types";
 import {YoutubeTranscript} from "youtube-transcript";
 import {encode, decode} from "gpt-3-encoder";
+import fs from "fs";
 
 const CHUNK_SIZE = 200;
 
@@ -59,4 +60,6 @@ const fetchTranscript = async (video: Video) => {
 		tokens: videos.reduce((acc, video) => acc + video.tokens, 0),
 		videos,
 	};
+
+	fs.writeFileSync("scripts/bobby.json", JSON.stringify(json));
 })();

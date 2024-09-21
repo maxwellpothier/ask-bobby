@@ -11,3 +11,6 @@ export type EmbeddedVideo = {
 	date: string;
 	embeddings: number[][];
 };
+export type ChunkReference = {
+	[videoId: string]: string[];
+};

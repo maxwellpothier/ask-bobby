@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import {RecursiveCharacterTextSplitter} from "langchain/text_splitter";
-import {ProcessedVideo} from "@/types";
+// import {ProcessedVideo} from "@/types";
 
-const getData = () => {
+export const getData = () => {
 	const dataPath = path.join(process.cwd(), "data", "processedVideos.json");
 
 	// Read the JSON file
@@ -23,8 +23,8 @@ export const chunkTranscript = async (
 	return chunks;
 };
 
-(async () => {
-	const videos: ProcessedVideo[] = getData();
+// (async () => {
+// 	const videos: ProcessedVideo[] = getData();
 
-	console.log(await chunkTranscript(videos[100].transcript));
-})().catch(console.error);
+// 	console.log(await chunkTranscript(videos[100].transcript));
+// })().catch(console.error);

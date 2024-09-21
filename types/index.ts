@@ -4,3 +4,10 @@ export type ProcessedVideo = {
 	date: string;
 	transcript: string;
 };
+
+export type EmbeddedVideo = {
+	videoId: string;
+	title: string;
+	date: string;
+	embeddings: number[][];
+};

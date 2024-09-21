@@ -31,13 +31,18 @@ const upsertToBobby = async (video: EmbeddedVideo): Promise<void> => {
 };
 
 const getEmbedding = async (chunk: string) => {
-	const embedding = await openai.embeddings.create({
-		model: "text-embedding-3-large",
-		input: chunk,
-		encoding_format: "float",
-	});
+	try {
+		const embedding = await openai.embeddings.create({
+			model: "text-embedding-3-large",
+			input: chunk,
+			encoding_format: "float",
+		});
 
-	return embedding.data[0].embedding;
+		return embedding.data[0].embedding;
+	} catch {
+		console.error("Error getting embedding for chunk: " + chunk);
+		return [];
+	}
 };
 
 (async () => {

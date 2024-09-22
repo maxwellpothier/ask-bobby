@@ -37,6 +37,12 @@ const HomePage = () => {
 				body: JSON.stringify({question}),
 			});
 			const data = await response.json();
+
+			if (data.error) {
+				setAnswer(data.error);
+				return;
+			}
+
 			setAnswer(data.answer);
 			setVideoInfo(data.videoInfo);
 		} catch (error) {
@@ -56,7 +62,7 @@ const HomePage = () => {
 	};
 
 	const uniqueVideoInfo = Array.from(
-		new Map(videoInfo.map(item => [item.url, item])).values()
+		new Map(videoInfo?.map(item => [item.url, item])).values()
 	);
 
 	return (
@@ -102,7 +108,7 @@ const HomePage = () => {
 												Referenced Videos:
 											</h3>
 											<ul className="list-disc pl-5">
-												{uniqueVideoInfo.map(
+												{uniqueVideoInfo?.map(
 													(video, index) => (
 														<li key={index}>
 															<a

@@ -1,101 +1,138 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+import {useState, useEffect} from "react";
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
+const HomePage = () => {
+	const [question, setQuestion] = useState("");
+	const [answer, setAnswer] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+	const [dots, setDots] = useState("");
+	const [videoInfo, setVideoInfo] = useState<
+		Array<{title: string; url: string}>
+	>([]);
+
+	useEffect(() => {
+		let interval: NodeJS.Timeout;
+		if (isLoading) {
+			interval = setInterval(() => {
+				setDots(prevDots =>
+					prevDots.length >= 3 ? "" : prevDots + "."
+				);
+			}, 500);
+		}
+		return () => clearInterval(interval);
+	}, [isLoading]);
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setAnswer("Thinking");
+		setIsLoading(true);
+		setVideoInfo([]);
+		try {
+			const response = await fetch("/api/chat", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({question}),
+			});
+			const data = await response.json();
+			setAnswer(data.answer);
+			setVideoInfo(data.videoInfo);
+		} catch (error) {
+			console.error(error);
+			setAnswer(
+				"Sorry, an error occurred while processing your question."
+			);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const handleClearAnswer = () => {
+		setAnswer("");
+		setQuestion("");
+		setVideoInfo([]);
+	};
+
+	const uniqueVideoInfo = Array.from(
+		new Map(videoInfo.map(item => [item.url, item])).values()
+	);
+
+	return (
+		<div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-400 to-purple-500 p-4">
+			<div className="w-full max-w-2xl bg-white rounded-lg shadow-xl p-8">
+				<h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
+					Chat with Bobby
+				</h1>
+				<form onSubmit={handleSubmit} className="mb-6">
+					<input
+						type="text"
+						value={question}
+						onChange={e => setQuestion(e.target.value)}
+						placeholder="Enter your question"
+						className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+					/>
+					<button
+						type="submit"
+						className="w-full mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+						Ask Bobby
+					</button>
+				</form>
+				{(answer || isLoading) && (
+					<div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+						<h2 className="font-bold mb-3 text-xl text-gray-800">
+							Bobby&apos;s Answer:
+						</h2>
+						<div className="text-gray-700 whitespace-pre-wrap">
+							{isLoading ? (
+								<p>Thinking{dots}</p>
+							) : (
+								<>
+									{answer
+										.split("\n")
+										.map((paragraph, index) => (
+											<p key={index} className="mb-2">
+												{paragraph}
+											</p>
+										))}
+									{uniqueVideoInfo.length > 0 && (
+										<div className="mt-4">
+											<h3 className="font-bold mb-2">
+												Referenced Videos:
+											</h3>
+											<ul className="list-disc pl-5">
+												{uniqueVideoInfo.map(
+													(video, index) => (
+														<li key={index}>
+															<a
+																href={video.url}
+																target="_blank"
+																rel="noopener noreferrer"
+																className="text-blue-600 hover:underline">
+																{video.title}
+															</a>
+														</li>
+													)
+												)}
+											</ul>
+										</div>
+									)}
+								</>
+							)}
+						</div>
+						{!isLoading && (
+							<button
+								onClick={handleClearAnswer}
+								className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+								Ask Another Question
+							</button>
+						)}
+					</div>
+				)}
+			</div>
+		</div>
+	);
+};
+
+export default HomePage;

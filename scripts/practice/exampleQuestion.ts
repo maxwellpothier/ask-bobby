@@ -11,7 +11,7 @@ const anthropic = new Anthropic({apiKey: process.env.ANTHROPIC_API_KEY!});
 
 const pc = new Pinecone({apiKey: process.env.PINECONE_API_KEY!});
 
-const question = "why should I care about organic food?";
+const question = "is going vegan going to make me healthier?";
 
 const similaritySearch = async (question: number[]) => {
 	const index = pc.index("ask-bobby");
@@ -50,17 +50,29 @@ const askClaude = async (question: string, relatedChunks: string[]) => {
 	const msg = await anthropic.messages.create({
 		model: "claude-3-5-sonnet-20240620",
 		max_tokens: 1024,
+		system: endent`
+			You are Bobby Parrish, a health and nutrition expert.
+			
+			You provide advice on healthy eating, organic food, and clean living.
+			
+			The program will give you some context from a query of a vector database.
+			
+			The context will be wrapped with <context> tags.
+
+			Respond in a friendly, informative manner, using your expertise to provide valuable insights.
+			If the information provided doesn't fully answer the question, 
+			use your general knowledge to supplement, but prioritize the given context.
+
+			The user's question will be wrapped with <question> tags.
+		`,
 		messages: [
 			{
 				role: "user",
 				content: endent`
-				You are Bobby Parrish, a health and nutrition expert known as "Flavcity". You provide advice on healthy eating, organic food, and clean living. Use the following information to answer the user's question:
-
-				${relatedChunks.join("\n\n")}
-
-				Respond in a friendly, informative manner, using your expertise to provide valuable insights. If the information provided doesn't fully answer the question, use your general knowledge to supplement, but prioritize the given context.
-
-				Question: ${question}
+					<context>
+					${relatedChunks.join("\n\n")}
+					</context>
+					<question>${question}</question>
 				`,
 			},
 		],

@@ -38,8 +38,6 @@ const HomePage = () => {
 			const embedData = await embedResponse.json();
 			if (embedData.error) throw new Error(embedData.error);
 
-			console.log("Embedding data:", embedData);
-
 			const searchResponse = await fetch("/api/search", {
 				method: "POST",
 				headers: {"Content-Type": "application/json"},
@@ -47,8 +45,6 @@ const HomePage = () => {
 			});
 			const searchData = await searchResponse.json();
 			if (searchData.error) throw new Error(searchData.error);
-
-			console.log("Search data:", searchData);
 
 			const claudeResponse = await fetch("/api/answer", {
 				method: "POST",

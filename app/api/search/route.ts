@@ -4,7 +4,9 @@ import {getRelatedChunks} from "@/utils/chatUtils";
 export const POST = async (req: Request) => {
 	try {
 		const {embedding} = await req.json();
+		console.log("Should make it here...");
 		const chunksToRef = await getRelatedChunks(embedding);
+		console.log("Chunks to reference:", chunksToRef);
 
 		if (!chunksToRef || chunksToRef.length === 0) {
 			return NextResponse.json(
@@ -22,9 +24,6 @@ export const POST = async (req: Request) => {
 		return NextResponse.json({videoInfo});
 	} catch (error) {
 		console.error("Search error:", error);
-		return NextResponse.json(
-			{error: "An error occurred while searching for related chunks."},
-			{status: 500}
-		);
+		return NextResponse.json({error: error}, {status: 500});
 	}
 };

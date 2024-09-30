@@ -28,23 +28,43 @@ const HomePage = () => {
 		setAnswer("Thinking");
 		setIsLoading(true);
 		setVideoInfo([]);
+
 		try {
-			const response = await fetch("/api/chat", {
+			const embedResponse = await fetch("/api/embed", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
+				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify({question}),
 			});
-			const data = await response.json();
+			const embedData = await embedResponse.json();
+			if (embedData.error) throw new Error(embedData.error);
 
-			if (data.error) {
-				setAnswer(data.error);
-				return;
-			}
+			console.log("Embedding data:", embedData);
 
-			setAnswer(data.answer);
-			setVideoInfo(data.videoInfo);
+			const searchResponse = await fetch("/api/search", {
+				method: "POST",
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({embedding: embedData.embedding}),
+			});
+			const searchData = await searchResponse.json();
+			if (searchData.error) throw new Error(searchData.error);
+
+			console.log("Search data:", searchData);
+
+			const claudeResponse = await fetch("/api/answer", {
+				method: "POST",
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({
+					question,
+					chunks: searchData.videoInfo.map(
+						(info: {chunk: string}) => info.chunk
+					),
+				}),
+			});
+			const claudeData = await claudeResponse.json();
+			if (claudeData.error) throw new Error(claudeData.error);
+
+			setAnswer(claudeData.answer);
+			setVideoInfo(searchData.videoInfo);
 		} catch (error) {
 			console.error(error);
 			setAnswer(

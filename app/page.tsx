@@ -1,7 +1,6 @@
 "use client";
 
 import {useState, useEffect} from "react";
-import Head from "next/head";
 
 const HomePage = () => {
 	const [question, setQuestion] = useState("");
@@ -83,87 +82,78 @@ const HomePage = () => {
 	);
 
 	return (
-		<>
-			<Head>
-				<title>Ask Bobby</title>
-			</Head>
-			<div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-400 to-purple-500 p-4">
-				<div className="w-full max-w-2xl bg-white rounded-lg shadow-xl p-8">
-					<h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
-						Chat with Bobby
-					</h1>
-					<form onSubmit={handleSubmit} className="mb-6">
-						<input
-							type="text"
-							value={question}
-							onChange={e => setQuestion(e.target.value)}
-							placeholder="Enter your question"
-							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-						<button
-							type="submit"
-							className="w-full mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
-							Ask Bobby
-						</button>
-					</form>
-					{(answer || isLoading) && (
-						<div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-							<h2 className="font-bold mb-3 text-xl text-gray-800">
-								Bobby&apos;s Answer:
-							</h2>
-							<div className="text-gray-700 whitespace-pre-wrap">
-								{isLoading ? (
-									<p>Thinking{dots}</p>
-								) : (
-									<>
-										{answer
-											.split("\n")
-											.map((paragraph, index) => (
-												<p key={index} className="mb-2">
-													{paragraph}
-												</p>
-											))}
-										{uniqueVideoInfo.length > 0 && (
-											<div className="mt-4">
-												<h3 className="font-bold mb-2">
-													Referenced Videos:
-												</h3>
-												<ul className="list-disc pl-5">
-													{uniqueVideoInfo?.map(
-														(video, index) => (
-															<li key={index}>
-																<a
-																	href={
-																		video.url
-																	}
-																	target="_blank"
-																	rel="noopener noreferrer"
-																	className="text-blue-600 hover:underline">
-																	{
-																		video.title
-																	}
-																</a>
-															</li>
-														)
-													)}
-												</ul>
-											</div>
-										)}
-									</>
-								)}
-							</div>
-							{!isLoading && (
-								<button
-									onClick={handleClearAnswer}
-									className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
-									Ask Another Question
-								</button>
+		<div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-400 to-purple-500 p-4">
+			<div className="w-full max-w-2xl bg-white rounded-lg shadow-xl p-8">
+				<h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
+					Chat with Bobby
+				</h1>
+				<form onSubmit={handleSubmit} className="mb-6">
+					<input
+						type="text"
+						value={question}
+						onChange={e => setQuestion(e.target.value)}
+						placeholder="Enter your question"
+						className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+					/>
+					<button
+						type="submit"
+						className="w-full mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+						Ask Bobby
+					</button>
+				</form>
+				{(answer || isLoading) && (
+					<div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+						<h2 className="font-bold mb-3 text-xl text-gray-800">
+							Bobby&apos;s Answer:
+						</h2>
+						<div className="text-gray-700 whitespace-pre-wrap">
+							{isLoading ? (
+								<p>Thinking{dots}</p>
+							) : (
+								<>
+									{answer
+										.split("\n")
+										.map((paragraph, index) => (
+											<p key={index} className="mb-2">
+												{paragraph}
+											</p>
+										))}
+									{uniqueVideoInfo.length > 0 && (
+										<div className="mt-4">
+											<h3 className="font-bold mb-2">
+												Referenced Videos:
+											</h3>
+											<ul className="list-disc pl-5">
+												{uniqueVideoInfo?.map(
+													(video, index) => (
+														<li key={index}>
+															<a
+																href={video.url}
+																target="_blank"
+																rel="noopener noreferrer"
+																className="text-blue-600 hover:underline">
+																{video.title}
+															</a>
+														</li>
+													)
+												)}
+											</ul>
+										</div>
+									)}
+								</>
 							)}
 						</div>
-					)}
-				</div>
+						{!isLoading && (
+							<button
+								onClick={handleClearAnswer}
+								className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+								Ask Another Question
+							</button>
+						)}
+					</div>
+				)}
 			</div>
-		</>
+		</div>
 	);
 };
 

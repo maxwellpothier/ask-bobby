@@ -43,7 +43,7 @@ export const getRelatedChunks = async (question: number[]) => {
 	const result = await similaritySearch(question);
 
 	const chunkReference = JSON.parse(
-		fs.readFileSync("data/chunkReference.json", "utf-8")
+		fs.readFileSync(process.cwd() + "/data/chunkReference.json", "utf-8")
 	);
 
 	return result.map(match => {

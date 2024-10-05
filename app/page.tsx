@@ -87,12 +87,29 @@ const HomePage = () => {
 				<h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
 					Chat with Bobby
 				</h1>
+				<p className="text-center text-gray-600 mb-6">
+					Welcome to Bobby Parrish&apos;s chatbot! Ask questions about
+					healthy living, products to avoid, and get insights on
+					ingredients and foods. Bobby is here to help you make
+					informed decisions about your health and nutrition.
+				</p>
+				<p className="text-center text-gray-600 mb-6">
+					Check out Bobby&apos;s{" "}
+					<a
+						href="https://www.youtube.com/@BobbyParrish"
+						target="_blank"
+						rel="noopener noreferrer"
+						className="text-blue-600 hover:underline">
+						YouTube channel
+					</a>{" "}
+					for more health and nutrition content!
+				</p>
 				<form onSubmit={handleSubmit} className="mb-6">
 					<input
 						type="text"
 						value={question}
 						onChange={e => setQuestion(e.target.value)}
-						placeholder="Enter your question"
+						placeholder="Enter your question about health, nutrition, or ingredients"
 						className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 					/>
 					<button
